@@ -1,77 +1,108 @@
-# Documentação do Projeto GenericsADA
+# README - Sistema de Processamento de Pagamentos e Notificações em Java
 
-## Descrição
+Este documento serve como uma descrição detalhada do projeto Java que implementa um sistema básico de processamento de pagamentos e envio de notificações. O projeto é estruturado em pacotes que organizam as classes de entidades, interfaces e implementações específicas.
 
-O projeto GenericsADA é uma aplicação Java configurada para ser desenvolvida utilizando o Eclipse IDE. Este projeto inclui configurações específicas de build, paths de classe e opções de encoding, facilitando o desenvolvimento e a manutenção do código.
+## Estrutura de Arquivos e Classes
 
----
+### Pacote `entities`
 
-## Estrutura do Projeto
+Este pacote contém as classes que representam entidades do sistema, como métodos de pagamento, notificações, e utilidades gerais.
 
-### Diretórios e Arquivos Principais
+#### Classe `CreditCard`
 
-- **`.classpath`**: Contém as configurações de classpath do projeto, especificando o Java Runtime Environment (JRE) bem como os diretórios de código fonte e de saída.
-- **`.project`**: Define o nome do projeto, ferramentas de build e naturezas do projeto necessárias para o Eclipse entender como construir e gerenciar o projeto.
-- **`.settings/`**:
-  - `org.eclipse.core.resources.prefs`: Define preferências de recursos do Eclipse, como o encoding do projeto.
-  - `org.eclipse.jdt.core.prefs`: Contém preferências específicas para o Java Development Tools (JDT) do Eclipse.
+Representa um cartão de crédito com um número associado.
 
-### Detalhes dos Arquivos
+- Construtor padrão.
+- Construtor que aceita um número de cartão como argumento.
+- Método `getCardNumber()` que retorna o número do cartão.
 
-#### `.classpath`
-Este arquivo XML define o ambiente necessário para a execução e compilação do projeto dentro do Eclipse. As configurações incluem:
-  - `JRE_CONTAINER`: Indica a versão do Java SE usada, que neste caso é a JavaSE-22.
-  - `module`: Define se o path especificado deve ser tratado como um módulo Java.
-  - `src`: Diretório que contém o código fonte do projeto.
-  - `bin`: Diretório para os arquivos de saída compilados (bytecode).
+#### Classe `CreditCardProcessor`
 
-#### `.project`
-Este arquivo XML contém metadados essenciais do projeto como:
-  - `name`: Nome do projeto, "GenericsADA".
-  - `buildCommand`: Comando de build do Eclipse que usa o Java builder padrão.
-  - `nature`: Define a natureza do projeto, especificamente como um projeto Java.
+Implementa a interface `PaymentProcessor` para processar pagamentos feitos com `CreditCard`.
 
-### Configurações de Encoding
+- Método `processPayment(CreditCard payment)` exibe uma mensagem indicando que o pagamento com o cartão de crédito especificado está sendo processado.
 
-- **UTF-8** é utilizado para todos os arquivos do projeto para assegurar compatibilidade e evitar problemas relacionados a diferentes codificações de caracteres.
+#### Classe `Email`
 
----
+Representa um email com um endereço.
 
-## Requisitos
+- Construtor que aceita um endereço de email como argumento.
 
-- **Eclipse IDE** - Este projeto foi configurado para o Eclipse e deve ser aberto ou importado através desta IDE.
-- **JDK 22** - Esta versão do kit de desenvolvimento Java é necessária para compilar e executar o projeto conforme definido no `.classpath`.
+#### Classe `EmailNotifier`
 
----
+Implementa a interface `Notifier` para enviar notificações via email.
 
-## Importando o Projeto no Eclipse
+- Método `send(Email message)` exibe uma mensagem indicando que um email está sendo enviado para o endereço especificado.
 
-1. Abra o Eclipse.
-2. Vá para `File > Open Projects from File System...`.
-3. Selecione o diretório que contém os arquivos deste projeto.
-4. Confirme a importação e o projeto será configurado automaticamente com base nos arquivos `.classpath` e `.project`.
+#### Classe `MemoryRepository`
 
----
+Representa um repositório em memória que pode armazenar qualquer tipo de objeto.
 
-## Contribuições
+- Método `save(T obj)` adiciona um objeto ao repositório.
+- Método `findAll()` retorna uma lista imutável de todos os objetos armazenados.
 
-Contribuições são bem-vindas! Para contribuir com o projeto, siga estas etapas:
+#### Classe `Numeros`
 
-1. Fork o repositório.
-2. Crie uma branch para sua feature (`git checkout -b minha-nova-feature`).
-3. Faça suas alterações.
-4. Commit suas mudanças (`git commit -am 'Adicionando uma nova feature'`).
-5. Push para a branch (`git push origin minha-nova-feature`).
-6. Abra um Pull Request.
+Representa um container para um valor inteiro.
 
----
+- Construtores padrão e parametrizado.
+- Métodos getter e setter para o valor inteiro.
 
-## Licença
+#### Classe `Pix`
 
-Este projeto é distribuído sob a [Insira aqui o tipo de licença], garantindo que ele possa ser usado de forma livre sob as condições estipuladas pela mesma.
+Representa um método de pagamento via PIX com uma chave associada.
 
----
+- Construtor que aceita uma chave PIX como argumento.
 
-## Contato
+#### Classe `PixProcessor`
 
-Para mais informações, entre em contato com o mantenedor do projeto: [email@example.com](mailto:email@example.com).
+Implementa a interface `PaymentProcessor` para processar pagamentos feitos via PIX.
+
+- Método `processPayment(Pix payment)` exibe uma mensagem indicando que o pagamento com a chave PIX especificada está sendo processado.
+
+### Pacote `interfaces`
+
+Contém as interfaces genéricas que definem as funcionalidades básicas de processamento de pagamentos e envio de notificações.
+
+#### Interface `PaymentProcessor`
+
+Define um método genérico `processPayment(T payment)` para processar um pagamento de algum tipo.
+
+#### Interface `Notifier`
+
+Define um método genérico `send(T message)` para enviar uma notificação de algum tipo.
+
+#### Interface `Repository`
+
+Define métodos genéricos para armazenar (`save(T obj)`) e recuperar (`findAll()`) objetos em um repositório.
+
+## Utilização
+
+O sistema é projetado para ser flexível e extensível, permitindo a adição de novos métodos de pagamento e notificações com facilidade, graças às interfaces genéricas e à abstração utilizada nas implementações.
+
+### Exemplos de Uso
+
+- **Processamento de Pagamento com Cartão de Crédito**:
+  ```java
+  CreditCard card = new CreditCard("1234 5678 9101 1121");
+  CreditCardProcessor processor = new CreditCardProcessor();
+  processor.processPayment(card);
+  ```
+
+- **Envio de Notificações por Email**:
+  ```java
+  Email email = new Email("usuario@example.com");
+  EmailNotifier notifier = new EmailNotifier();
+  notifier.send(email);
+  ```
+
+- **Armazenamento de Dados em Repositório em Memória**:
+  ```java
+  MemoryRepository<String> repository = new MemoryRepository<>();
+  repository.save("Dados");
+  List<String> allData = repository.findAll();
+  ```
+
+## Conclusão
+
+Este projeto demonstra um sistema básico mas eficiente de processamento de pagamentos e envio de notificações em Java, utilizando boas práticas de programação como o uso de interfaces e injeção de dependência para facilitar a manutenção e expansão futura do código.
